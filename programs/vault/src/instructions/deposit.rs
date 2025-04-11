@@ -1,7 +1,10 @@
 use crate::errors::ErrorCode;
 use crate::state::vault_info::*;
 use anchor_lang::prelude::*;
-use anchor_spl::token::{mint_to, transfer, Mint, MintTo, Token, TokenAccount, Transfer};
+use anchor_spl::{
+    associated_token::{self, AssociatedToken},
+    token::{mint_to, transfer, Mint, MintTo, Token, TokenAccount, Transfer},
+};
 
 #[derive(Accounts)]
 pub struct Deposit<'info> {
@@ -38,7 +41,8 @@ pub struct Deposit<'info> {
     pub lp_mint: Account<'info, Mint>,
     // User's LP token account
     #[account(
-        mut,
+        init_if_needed,
+        payer = payer,
         associated_token::mint = lp_mint,
         associated_token::authority = payer,
     )]
@@ -47,6 +51,8 @@ pub struct Deposit<'info> {
     pub payer: Signer<'info>,
     pub system_program: Program<'info, System>,
     pub token_program: Program<'info, Token>,
+    #[account(address = associated_token::ID)]
+    associated_token_program: Program<'info, AssociatedToken>,
 }
 
 /// Deposits SPL tokens into the vault and mints LP tokens to the depositor.

@@ -6,6 +6,7 @@ use anchor_spl::{
         create_metadata_accounts_v3, mpl_token_metadata::types::DataV2, CreateMetadataAccountsV3,
     },
     token::{burn, mint_to, Burn, Mint, MintTo, Token, TokenAccount},
+    associated_token::{self, AssociatedToken},
 };
 
 use crate::errors::ErrorCode;
@@ -34,6 +35,8 @@ pub struct InitializeVault<'info> {
     pub deposit_mint: Account<'info, Mint>,
     // If vault is optionally for SPL token deposit, here is its token account
     #[account(
+        init,
+        payer = payer,
         associated_token::mint = deposit_mint, 
         associated_token::authority = vault_info
     )]
@@ -54,6 +57,8 @@ pub struct InitializeVault<'info> {
     pub rent: Sysvar<'info, Rent>,
     pub system_program: Program<'info, System>,
     pub token_program: Program<'info, Token>,
+    #[account(address = associated_token::ID)]
+    associated_token_program: Program<'info, AssociatedToken>,
     /// CHECK: account constraint checked in account trait
     #[account(address = mpl_token_metadata::ID)]
     pub token_metadata_program: UncheckedAccount<'info>,
