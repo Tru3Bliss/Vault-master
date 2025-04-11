@@ -1,0 +1,6 @@
+{
+    "name": "GEM Vault LP Token",
+    "symbol": "vGEM",
+    "description": "Receipt token for USDC deposits into the USDC GEMS DAO vault",
+    "image": "https://www.gemsdao.io/images/Card.png"
+}
